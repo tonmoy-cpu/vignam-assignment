@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 
 export default function ProductShowcase() {
-  const [currentCards, setCurrentCards] = useState([0, 1, 2]);
-  const [animationKey, setAnimationKey] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showDragDrop, setShowDragDrop] = useState(false);
 
   const products = [
     {
@@ -41,25 +41,35 @@ export default function ProductShowcase() {
     }
   ];
 
-  // Auto-rotate cards every 3 seconds
+  // Auto-rotate cards every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentCards(prev => {
-        const newCards = [...prev];
-        const firstCard = newCards.shift();
-        if (firstCard !== undefined) {
-          newCards.push((firstCard + 1) % products.length);
+      setCurrentIndex(prev => {
+        const nextIndex = (prev + 1) % products.length;
+        // Show drag & drop after first slide (when index becomes 1)
+        if (nextIndex === 1) {
+          setShowDragDrop(true);
         }
-        return newCards;
+        return nextIndex;
       });
-      setAnimationKey(prev => prev + 1);
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [products.length]);
 
+  const getVisibleProducts = () => {
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % products.length;
+      visible.push({ ...products[index], originalIndex: index });
+    }
+    return visible;
+  };
+
+  const visibleProducts = getVisibleProducts();
+
   return (
-    <section id="products" className="py-20 bg-white relative">
+    <section id="products" className="py-20 bg-white relative overflow-hidden">
       {/* Grid Background */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0" style={{
@@ -91,30 +101,32 @@ export default function ProductShowcase() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {currentCards.map((productIndex, cardIndex) => {
-            const product = products[productIndex];
-            
-            return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative h-[600px]">
+          <AnimatePresence mode="wait">
+            {visibleProducts.map((product, cardIndex) => (
               <motion.div
-                key={`${productIndex}-${animationKey}-${cardIndex}`}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -30, scale: 0.9 }}
+                key={`${product.originalIndex}-${currentIndex}`}
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
                 transition={{ 
-                  duration: 0.6, 
+                  duration: 0.8, 
                   delay: cardIndex * 0.1,
                   type: "spring",
                   stiffness: 100
                 }}
-                className="bg-gray-50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-white rounded-lg border border-gray-200 p-6 shadow-sm"
+                style={{ 
+                  left: cardIndex === 0 ? '0%' : cardIndex === 1 ? '33.333%' : '66.666%',
+                  transform: cardIndex > 0 ? `translateX(${cardIndex * 1}rem)` : 'none'
+                }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                 </div>
 
-                <div className="space-y-2 text-sm text-gray-600 mb-6">
+                <div className="space-y-2 text-xs text-gray-600 mb-6">
                   <div className="flex justify-between">
                     <span className="font-medium">Material:</span>
                     <span className="text-right">{product.material}</span>
@@ -193,7 +205,7 @@ export default function ProductShowcase() {
                   )}
                 </div>
 
-                <div className="aspect-square bg-white rounded-lg overflow-hidden">
+                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
                   <img 
                     src={product.image}
                     alt={product.name}
@@ -201,37 +213,49 @@ export default function ProductShowcase() {
                   />
                 </div>
               </motion.div>
-            );
-          })}
-        </div>
+            ))}
+          </AnimatePresence>
 
-        {/* Upload CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-blue-600 rounded-2xl p-8 text-center text-white max-w-md mx-auto"
-        >
-          <h3 className="text-3xl font-bold mb-6">
-            Drag & Drop
-            <br />
-            Your 3D Design
-          </h3>
-          
-          <div className="w-32 h-32 mx-auto mb-6 border-2 border-white/30 border-dashed rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 border-2 border-white rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </div>
-              <div className="text-sm opacity-75">Drop files here</div>
-            </div>
-          </div>
-          
-          <p className="text-sm opacity-90 mb-4">SUPPORTED FORMATS</p>
-          <p className="font-mono text-lg">IGES / STL / FBX / DXF / STEP</p>
-        </motion.div>
+          {/* Drag & Drop Card - Shows as third card after first slide */}
+          <AnimatePresence>
+            {showDragDrop && (
+              <motion.div
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: 0.2,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-blue-600 rounded-lg p-8 text-center text-white"
+                style={{ 
+                  left: '66.666%',
+                  transform: 'translateX(2rem)'
+                }}
+              >
+                <h3 className="text-2xl font-bold mb-6">
+                  Drag & Drop
+                  <br />
+                  Your 3D Design
+                </h3>
+                
+                <div className="w-24 h-24 mx-auto mb-6 border-2 border-white/30 border-dashed rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <div className="text-xs opacity-75">Drop files here</div>
+                  </div>
+                </div>
+                
+                <p className="text-xs opacity-90 mb-2">SUPPORTED FORMATS</p>
+                <p className="font-mono text-sm">IGES / STL / FBX / DXF / STEP</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );

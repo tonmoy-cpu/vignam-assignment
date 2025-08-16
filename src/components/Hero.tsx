@@ -85,6 +85,42 @@ export default function Hero() {
             Tomorrow
           </h1>
           
+          {/* 3D Cube Model */}
+          <div className="flex justify-center my-12">
+            <div className="w-48 h-48 relative">
+              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                <Suspense fallback={null}>
+                  <Environment files="/forest.exr" />
+                  <ambientLight intensity={0.6} />
+                  <directionalLight position={[10, 10, 5]} intensity={1} />
+                  
+                  <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+                    <mesh>
+                      <boxGeometry args={[1.5, 1.5, 1.5]} />
+                      <meshStandardMaterial 
+                        color="#8B9DC3" 
+                        metalness={0.9} 
+                        roughness={0.1}
+                        envMapIntensity={1}
+                      />
+                      {/* Blue accent bands */}
+                      <mesh position={[0, 0.6, 0]} scale={[1.1, 0.1, 1.1]}>
+                        <boxGeometry args={[1, 1, 1]} />
+                        <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                      </mesh>
+                      <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
+                        <boxGeometry args={[1, 1, 1]} />
+                        <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                      </mesh>
+                    </mesh>
+                  </Float>
+                  
+                  <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+                </Suspense>
+              </Canvas>
+            </div>
+          </div>
+          
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             Upload your CAD file, and we'll take care
             <br />
