@@ -10,9 +10,9 @@ export default function VideoSection() {
   };
 
   return (
-    <section className="py-12 md:py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
+    <section className="py-0 bg-white">
+      <div className="w-full">
+        <div className="relative aspect-video bg-gray-900 overflow-hidden">
           {!isPlaying ? (
             <div className="relative w-full h-full">
               {/* Video Thumbnail */}
@@ -28,9 +28,9 @@ export default function VideoSection() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handlePlayVideo}
-                  className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-2xl"
+                  className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl"
                 >
-                  <Play className="w-6 h-6 md:w-8 md:h-8 text-gray-900 ml-1" fill="currentColor" />
+                  <Play className="w-8 h-8 text-gray-900 ml-1" fill="currentColor" />
                 </motion.button>
               </div>
 
@@ -40,14 +40,14 @@ export default function VideoSection() {
               </div>
               
               <div className="absolute top-4 right-4">
-                <button className="text-white text-xs md:text-sm border border-white/30 px-2 md:px-3 py-1 rounded hover:bg-white/10 transition-colors">
+                <button className="text-white text-sm border border-white/30 px-3 py-1 rounded hover:bg-white/10 transition-colors">
                   CHECK ON YOUTUBE →
                 </button>
               </div>
 
               {/* Video Duration */}
               <div className="absolute bottom-4 left-4 text-white text-sm">
-                00:08
+                00:07
               </div>
               
               <div className="absolute bottom-4 right-4 text-white text-sm">

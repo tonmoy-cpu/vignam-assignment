@@ -30,12 +30,23 @@ export default function AboutSection() {
   ];
 
   return (
-    <section id="about" className="py-12 md:py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
+    <section id="about" className="py-20 bg-white relative">
+      {/* Grid Background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px)
+          `,
+          backgroundSize: '24px 24px'
+        }}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left Content */}
           <div>
-            <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6 md:mb-8">
+            <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
               About
             </div>
             
@@ -43,7 +54,7 @@ export default function AboutSection() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 md:mb-8 leading-tight"
+              className="text-5xl font-bold text-gray-900 mb-8 leading-tight"
             >
               Revolutionizing
               <br />
@@ -53,7 +64,7 @@ export default function AboutSection() {
             </motion.h2>
 
             {/* Services List */}
-            <div className="space-y-4 md:space-y-6 mb-8 md:mb-12">
+            <div className="space-y-6 mb-12">
               {services.map((service, index) => (
                 <motion.div
                   key={service.number}
@@ -89,7 +100,7 @@ export default function AboutSection() {
                     <ChevronRight className="w-4 h-4 text-blue-600" />
                   </motion.div>
                   
-                  <span className="text-base md:text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors ml-6">
+                  <span className="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors ml-6">
                     {service.name}
                   </span>
                   <div className="flex-1 border-b border-gray-200"></div>
@@ -99,7 +110,7 @@ export default function AboutSection() {
 
             {/* Single CNC Part Image that changes on hover */}
             <motion.div
-              className="w-full max-w-sm aspect-square bg-gray-200 rounded-lg overflow-hidden"
+              className="w-full max-w-sm aspect-square bg-gray-100 rounded-lg overflow-hidden"
               key={currentImage}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -114,20 +125,20 @@ export default function AboutSection() {
           </div>
 
           {/* Right Content - Testimonial */}
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+          <div className="bg-white p-8 rounded-2xl shadow-lg">
             <div className="flex items-center space-x-4 mb-6">
               <img 
                 src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop"
                 alt="Ayrton Senna"
-                className="w-12 md:w-16 h-12 md:h-16 rounded-full object-cover"
+                className="w-16 h-16 rounded-full object-cover"
               />
               <div>
-                <h3 className="font-bold text-gray-900 text-sm md:text-base">Ayrton Senna</h3>
-                <p className="text-gray-600 text-xs md:text-sm">CEO & Senior Partner at Forge</p>
+                <h3 className="font-bold text-gray-900">Ayrton Senna</h3>
+                <p className="text-gray-600 text-sm">CEO & Senior Partner at Forge</p>
               </div>
             </div>
             
-            <div className="space-y-4 text-gray-700 leading-relaxed text-sm md:text-base">
+            <div className="space-y-4 text-gray-700 leading-relaxed">
               <p>
                 At Forge, we believe that getting custom CNC parts should be fast, reliable, and effortless. That's why we built a fully streamlined platform that turns your CAD files into production-ready parts—delivered in as fast as one day. Whether you're prototyping or scaling, we remove the friction from manufacturing so you can focus on building what matters.
               </p>
@@ -137,7 +148,7 @@ export default function AboutSection() {
               </p>
             </div>
 
-            <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-100">
+            <div className="mt-8 pt-6 border-t border-gray-100">
               <p className="text-xs text-gray-500 uppercase tracking-wide">
                 EVERY DETAIL MATTERS — WE CRAFT EACH PART WITH CARE, ACCURACY, AND A FINISH THAT FEELS JUST RIGHT
               </p>

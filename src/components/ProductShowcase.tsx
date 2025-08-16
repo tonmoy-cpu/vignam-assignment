@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Upload } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 export default function ProductShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [stackedCards, setStackedCards] = useState([0, 1, 2, 3]);
+  const [showDragDrop, setShowDragDrop] = useState(false);
 
   const products = [
     {
@@ -41,36 +41,50 @@ export default function ProductShowcase() {
     }
   ];
 
-  // Auto-rotate cards every 3 seconds
+  // Auto-rotate cards every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setStackedCards(prev => {
-        const newStack = [...prev];
-        const firstCard = newStack.shift();
-        if (firstCard !== undefined) {
-          newStack.push(firstCard);
+      setCurrentIndex(prev => {
+        const nextIndex = (prev + 1) % products.length;
+        // Show drag & drop after first slide (when index becomes 1)
+        if (nextIndex === 1) {
+          setShowDragDrop(true);
         }
-        return newStack;
+        return nextIndex;
       });
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [products.length]);
 
-  const nextProduct = () => {
-    setCurrentIndex((prev) => (prev + 1) % products.length);
+  const getVisibleProducts = () => {
+    const visible = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % products.length;
+      visible.push({ ...products[index], originalIndex: index });
+    }
+    return visible;
   };
 
-  const prevProduct = () => {
-    setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
-  };
+  const visibleProducts = getVisibleProducts();
 
   return (
-    <section id="products" className="py-12 md:py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section id="products" className="py-20 bg-white relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px)
+          `,
+          backgroundSize: '24px 24px'
+        }}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6 md:mb-8">
+        <div className="text-center mb-16">
+          <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
             Manufacture
           </div>
           
@@ -78,7 +92,7 @@ export default function ProductShowcase() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"
+            className="text-5xl font-bold text-gray-900 leading-tight"
           >
             The Most Popular
             <br />
@@ -86,175 +100,162 @@ export default function ProductShowcase() {
           </motion.h2>
         </div>
 
-        {/* Product Cards with Stacking Animation */}
-        <div className="relative mb-8 md:mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {stackedCards.map((productIndex, stackIndex) => {
-              const product = products[productIndex];
-              const isTop = stackIndex === 0;
-              
-              return (
-                <motion.div
-                  key={`${productIndex}-${stackIndex}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: stackIndex * -8,
-                    scale: 1 - (stackIndex * 0.02),
-                    zIndex: 10 - stackIndex
-                  }}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: stackIndex * 0.1,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  className={`bg-white rounded-2xl p-4 md:p-6 shadow-lg transition-all duration-300 relative ${
-                    isTop ? 'ring-2 ring-blue-600' : ''
-                  }`}
-                  style={{ 
-                    position: stackIndex > 0 ? 'absolute' : 'relative',
-                    top: stackIndex > 0 ? 0 : 'auto',
-                    left: stackIndex > 0 ? 0 : 'auto',
-                    right: stackIndex > 0 ? 0 : 'auto'
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900">{product.name}</h3>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+        {/* Product Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative h-[600px]">
+          <AnimatePresence mode="wait">
+            {visibleProducts.map((product, cardIndex) => (
+              <motion.div
+                key={`${product.originalIndex}-${currentIndex}`}
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: cardIndex * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-white rounded-lg border border-gray-200 p-6 shadow-sm"
+                style={{ 
+                  left: cardIndex === 0 ? '0%' : cardIndex === 1 ? '33.333%' : '66.666%',
+                  transform: cardIndex > 0 ? `translateX(${cardIndex * 1}rem)` : 'none'
+                }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </div>
 
-                  <div className="space-y-2 text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+                <div className="space-y-2 text-xs text-gray-600 mb-6">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Material:</span>
+                    <span className="text-right">{product.material}</span>
+                  </div>
+                  {product.loadCapacity && (
                     <div className="flex justify-between">
-                      <span className="font-medium">Material:</span>
-                      <span className="text-right">{product.material}</span>
+                      <span className="font-medium">Load Capacity:</span>
+                      <span className="text-right">{product.loadCapacity}</span>
                     </div>
-                    {product.loadCapacity && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Load Capacity:</span>
-                        <span className="text-right">{product.loadCapacity}</span>
-                      </div>
-                    )}
-                    {product.thread && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Thread:</span>
-                        <span className="text-right">{product.thread}</span>
-                      </div>
-                    )}
-                    {product.bearingType && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Bearing Type:</span>
-                        <span className="text-right">{product.bearingType}</span>
-                      </div>
-                    )}
-                    {product.holeDiameter && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Hole Diameter:</span>
-                        <span className="text-right">{product.holeDiameter}</span>
-                      </div>
-                    )}
-                    {product.vibrationDamping && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Vibration Damping:</span>
-                        <span className="text-right">{product.vibrationDamping}</span>
-                      </div>
-                    )}
-                    {product.mountingStyle && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Mounting Style:</span>
-                        <span className="text-right">{product.mountingStyle}</span>
-                      </div>
-                    )}
-                    {product.pinCount && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Pin Count:</span>
-                        <span className="text-right">{product.pinCount}</span>
-                      </div>
-                    )}
-                    {product.waterproofRating && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Waterproof Rating:</span>
-                        <span className="text-right">{product.waterproofRating}</span>
-                      </div>
-                    )}
-                    {product.locking && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Locking:</span>
-                        <span className="text-right">{product.locking}</span>
-                      </div>
-                    )}
-                    {product.fitType && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Fit Type:</span>
-                        <span className="text-right">{product.fitType}</span>
-                      </div>
-                    )}
-                    {product.waterResistance && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Water Resistance:</span>
-                        <span className="text-right">{product.waterResistance}</span>
-                      </div>
-                    )}
-                    {product.impactResistance && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Impact Resistance:</span>
-                        <span className="text-right">{product.impactResistance}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
+                  {product.thread && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Thread:</span>
+                      <span className="text-right">{product.thread}</span>
+                    </div>
+                  )}
+                  {product.bearingType && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Bearing Type:</span>
+                      <span className="text-right">{product.bearingType}</span>
+                    </div>
+                  )}
+                  {product.holeDiameter && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Hole Diameter:</span>
+                      <span className="text-right">{product.holeDiameter}</span>
+                    </div>
+                  )}
+                  {product.vibrationDamping && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Vibration Damping:</span>
+                      <span className="text-right">{product.vibrationDamping}</span>
+                    </div>
+                  )}
+                  {product.mountingStyle && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Mounting Style:</span>
+                      <span className="text-right">{product.mountingStyle}</span>
+                    </div>
+                  )}
+                  {product.pinCount && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Pin Count:</span>
+                      <span className="text-right">{product.pinCount}</span>
+                    </div>
+                  )}
+                  {product.waterproofRating && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Waterproof Rating:</span>
+                      <span className="text-right">{product.waterproofRating}</span>
+                    </div>
+                  )}
+                  {product.locking && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Locking:</span>
+                      <span className="text-right">{product.locking}</span>
+                    </div>
+                  )}
+                  {product.fitType && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Fit Type:</span>
+                      <span className="text-right">{product.fitType}</span>
+                    </div>
+                  )}
+                  {product.waterResistance && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Water Resistance:</span>
+                      <span className="text-right">{product.waterResistance}</span>
+                    </div>
+                  )}
+                  {product.impactResistance && (
+                    <div className="flex justify-between">
+                      <span className="font-medium">Impact Resistance:</span>
+                      <span className="text-right">{product.impactResistance}</span>
+                    </div>
+                  )}
+                </div>
 
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                    <img 
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+                  <img 
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
-          {/* Navigation Arrows */}
-          <div className="flex justify-center space-x-4 mt-8">
-            <button
-              onClick={prevProduct}
-              className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-            </button>
-            <button
-              onClick={nextProduct}
-              className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-gray-600" />
-            </button>
-          </div>
+          {/* Drag & Drop Card - Shows as third card after first slide */}
+          <AnimatePresence>
+            {showDragDrop && (
+              <motion.div
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 100, opacity: 0 }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: 0.2,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-blue-600 rounded-lg p-8 text-center text-white"
+                style={{ 
+                  left: '66.666%',
+                  transform: 'translateX(2rem)'
+                }}
+              >
+                <h3 className="text-2xl font-bold mb-6">
+                  Drag & Drop
+                  <br />
+                  Your 3D Design
+                </h3>
+                
+                <div className="w-24 h-24 mx-auto mb-6 border-2 border-white/30 border-dashed rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <div className="text-xs opacity-75">Drop files here</div>
+                  </div>
+                </div>
+                
+                <p className="text-xs opacity-90 mb-2">SUPPORTED FORMATS</p>
+                <p className="font-mono text-sm">IGES / STL / FBX / DXF / STEP</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/* Upload CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-blue-600 rounded-2xl p-6 md:p-8 text-center text-white"
-        >
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">
-            Drag & Drop
-            <br />
-            Your 3D Design
-          </h3>
-          
-          <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 md:mb-6 border-2 border-white/30 border-dashed rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <Upload className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2" />
-              <div className="text-xs md:text-sm opacity-75">Drop files here</div>
-            </div>
-          </div>
-          
-          <p className="text-xs md:text-sm opacity-90 mb-2 md:mb-4">SUPPORTED FORMATS</p>
-          <p className="font-mono text-sm md:text-lg">IGES / STL / FBX / DXF / STEP</p>
-        </motion.div>
       </div>
     </section>
   );
