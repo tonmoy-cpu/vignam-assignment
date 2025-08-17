@@ -1,12 +1,20 @@
-import React, { Suspense, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Float } from '@react-three/drei';
-import { motion } from 'framer-motion';
-import * as THREE from 'three';
+import React, { Suspense, useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { OrbitControls, Float, Environment } from '@react-three/drei'
+import { motion } from 'framer-motion'
+import * as THREE from 'three'
 
-function CNCPart({ position, rotation, scale = 1 }: { position: [number, number, number], rotation: [number, number, number], scale?: number }) {
+function CNCPart({
+  position,
+  rotation,
+  scale = 1
+}: {
+  position: [number, number, number]
+  rotation: [number, number, number]
+  scale?: number
+}) {
   const meshRef = useRef<THREE.Mesh>(null)
-  
+
   useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y += 0.01
@@ -25,34 +33,12 @@ function CNCPart({ position, rotation, scale = 1 }: { position: [number, number,
         </mesh>
       </mesh>
     </Float>
-  );
-}
-
-function MotorModel() {
-  try {
-    const { scene } = useGLTF('/landing_page_motor.glb');
-    const meshRef = useRef<THREE.Group>(null);
-    
-    useFrame(() => {
-      if (meshRef.current) {
-        meshRef.current.rotation.y += 0.005;
-      }
-    });
-
-    return <primitive ref={meshRef} object={scene} scale={1.5} position={[0, 0, 0]} />;
-  } catch (error) {
-    return (
-      <mesh>
-        <boxGeometry args={[1.5, 0.8, 1.5]} />
-        <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} />
-      </mesh>
-    );
-  }
+  )
 }
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen bg-white overflow-hidden">
+    <section className="relative h-screen bg-white overflow-hidden flex flex-col justify-center items-center text-center px-6">
       <div className="absolute inset-0 opacity-40">
         <div
           className="absolute inset-0"
@@ -61,92 +47,70 @@ export default function Hero() {
               linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px),
               linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px)
             `,
-            backgroundSize: '24px 24px'
+            backgroundSize: '10px 10px'
           }}
-        ></div>
+        />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32">
-        <motion.div
+      <div className="relative z-10 flex flex-col items-center justify-center h-full max-w-5xl mx-auto pt-24">
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center"
+          className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight"
         >
-          <h1 className="text-7xl font-bold text-gray-900 mb-8 leading-tight">
-            Precision <span className="text-gray-400 italic">CNC</span> Parts
-            <br />
-            Shipped as Fast as
-            <br />
-            Tomorrow
-          </h1>
-          
-          {/* 3D Cube Model */}
-          <div className="flex justify-center my-30">
-            <div className="w-70 h-70 relative">
-              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-                <Suspense fallback={null}>
-                  <Environment files="/forest.exr" />
-                  <ambientLight intensity={0.6} />
-                  <directionalLight position={[10, 10, 5]} intensity={1} />
+          Precision <span className="text-gray-400 italic">CNC</span> Parts
+          <br />
+          Shipped as Fast as
+          <br />
+          Tomorrow
+        </motion.h1>
 
-                  <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-                    <mesh>
-                      <boxGeometry args={[1.5, 1.5, 1.5]} />
-                      <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} envMapIntensity={1} />
-                      <mesh position={[0, 0.6, 0]} scale={[1.3, 0.1, 1.1]}>
-                        <boxGeometry args={[1, 1, 1]} />
-                        <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                      </mesh>
-                      <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
-                        <boxGeometry args={[1, 1, 1]} />
-                        <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                      </mesh>
-                    </mesh>
-                  </Float>
+        <div className="w-48 h-48 md:w-64 md:h-64 mb-8">
+          <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+            <Suspense fallback={null}>
+              <Environment files="/forest.exr" />
+              <ambientLight intensity={0.6} />
+              <directionalLight position={[10, 10, 5]} intensity={1} />
 
-                  <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
-                </Suspense>
-              </Canvas>
-            </div>
-          </div>
+              <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+                <mesh>
+                  <boxGeometry args={[1.5, 1.5, 1.5]} />
+                  <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} envMapIntensity={1} />
+                  <mesh position={[0, 0.6, 0]} scale={[1.3, 0.1, 1.1]}>
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                  </mesh>
+                  <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                  </mesh>
+                </mesh>
+              </Float>
 
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Upload your CAD file, and we'll take care
-            <br />
-            of machining, finishing, and shipping—accurate
-            <br />
-            parts delivered fast, no stress
-          </p>
-          
-          <motion.button 
-            whileHover={{ scale: 0.71 }}
-            whileTap={{ scale: 0.68 }}
-            className="bg-blue-600 text-white px-8 py-1 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>UPLOAD YOUR DESIGN</span>
-          </motion.button>
-        </motion.div>
-        <br />
-        <br />
-        <br />
-
-        <div className="absolute bottom-8 left-6 text-xs text-gray-500">
-          <div>12+ YEARS OF DELIVERING</div>
-          <div>PERFECT DETAILS</div>
+              <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+            </Suspense>
+          </Canvas>
         </div>
 
-        <div className="absolute bottom-8 right-6 text-xs text-gray-500 text-right">
-          <div>OVER 100,000 PARTS</div>
-          <div>MANUFACTURED ANNUALLY</div>
-        </div>
+        <p className="text-base md:text-lg text-gray-600 mb-8 max-w-xl">
+          Upload your CAD file, and we'll take care of machining, finishing, and shipping—accurate parts delivered fast, no stress.
+        </p>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg font-semibold text-base md:text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fillRule="evenodd"
+              d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span>UPLOAD YOUR DESIGN</span>
+        </motion.button>
       </div>
 
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -166,6 +130,18 @@ export default function Hero() {
             <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.2} />
           </Suspense>
         </Canvas>
+      </div>
+      <br />
+      <br />
+
+      <div className="absolute bottom-6 left-6 text-xs md:text-sm text-gray-500 text-left">
+        <div>12+ YEARS OF DELIVERING</div>
+        <div>PERFECT DETAILS</div>
+      </div>
+
+      <div className="absolute bottom-6 right-6 text-xs md:text-sm text-gray-500 text-right">
+        <div>OVER 100,000 PARTS</div>
+        <div>MANUFACTURED ANNUALLY</div>
       </div>
     </section>
   )

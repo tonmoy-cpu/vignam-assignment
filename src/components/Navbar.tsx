@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -17,15 +9,14 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-md" : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-transparent"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center space-x-2">
             <div className="w-7 h-7 text-blue-600">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -35,6 +26,7 @@ export default function Navbar() {
             <span className="text-2xl font-bold text-gray-900">Forge</span>
           </div>
 
+          {/* Location */}
           <div className="hidden md:flex items-center space-x-1 text-sm text-gray-600">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -46,6 +38,7 @@ export default function Navbar() {
             <span>Canada, Montreal</span>
           </div>
 
+          {/* Menu */}
           <div className="flex items-center space-x-6 text-sm font-medium">
             <button
               onClick={() => scrollToSection("manufacture")}
