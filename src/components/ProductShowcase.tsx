@@ -13,7 +13,7 @@ export default function ProductShowcase() {
       loadCapacity: 'Up to 10,000 N',
       thread: 'M8 to M30',
       bearingType: 'Ball or Plain',
-      image: 'https://flutebearer.wordpress.com/wp-content/uploads/2020/02/figxx.jpg?w=628'
+      image: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
     },
     {
       name: 'Mounting Plate',
@@ -21,7 +21,7 @@ export default function ProductShowcase() {
       holeDiameter: '6 mm to 12 mm',
       vibrationDamping: 'Rubber Inserts',
       mountingStyle: 'Horizontal, Vertical',
-      image: 'https://static.treatstock.com/static/files/4e/dc/418934_112_ac6099b85738a8ba69a7b8f6ee0b5e20_720x540.jpg?date=1540228634'
+      image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
     },
     {
       name: 'Multi-Pin Enclosure',
@@ -29,7 +29,7 @@ export default function ProductShowcase() {
       pinCount: '2 to 50+ Pins',
       waterproofRating: 'IP65/IP67',
       locking: 'Screw or Clip',
-      image: 'https://fbi.cults3d.com/uploaders/28926434/illustration-file/36d9bcfb-8f0f-415c-b068-caddd6f88bc7/Screenshot-2023-07-31-001443.png'
+      image: 'https://images.pexels.com/photos/1108117/pexels-photo-1108117.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
     },
     {
       name: 'Protective Cap',
@@ -37,9 +37,16 @@ export default function ProductShowcase() {
       fitType: 'Snap-on, Threaded',
       waterResistance: 'IP54',
       impactResistance: '10 J',
-      image: 'https://fbi.cults3d.com/uploaders/16984740/illustration-file/8ff9ec1c-1be7-4e52-8b89-9601ef52e51d/d0064d7cd4e58864d2baa0d97c66e90d.png'
+      image: 'https://images.pexels.com/photos/1108102/pexels-photo-1108102.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'
     }
   ];
+
+  const dragDropCard = {
+    name: 'Drag & Drop',
+    subtitle: 'Your 3D Design',
+    supportedFormats: 'IGES / STL / FBX / DXF / STEP',
+    isDragDrop: true
+  };
 
   // Auto-rotate cards every 4 seconds
   useEffect(() => {
@@ -61,7 +68,11 @@ export default function ProductShowcase() {
     const visible = [];
     for (let i = 0; i < 3; i++) {
       const index = (currentIndex + i) % products.length;
-      visible.push({ ...products[index], originalIndex: index });
+      if (i === 2 && showDragDrop) {
+        visible.push({ ...dragDropCard, originalIndex: -1 });
+      } else {
+        visible.push({ ...products[index], originalIndex: index });
+      }
     }
     return visible;
   };
@@ -71,7 +82,7 @@ export default function ProductShowcase() {
   return (
     <section id="products" className="py-20 bg-white relative overflow-hidden">
       {/* Grid Background */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-40">
         <div className="absolute inset-0" style={{
           backgroundImage: `
             linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px),
@@ -101,11 +112,11 @@ export default function ProductShowcase() {
         </div>
 
         {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 relative min-h-[600px]">
           <AnimatePresence mode="wait">
             {visibleProducts.map((product, cardIndex) => (
               <motion.div
-                key={`${product.originalIndex}-${currentIndex}`}
+                key={`${product.originalIndex}-${currentIndex}-${cardIndex}`}
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 100, opacity: 0 }}
@@ -115,103 +126,121 @@ export default function ProductShowcase() {
                   type: "spring",
                   stiffness: 100
                 }}
-                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-white rounded-lg border border-gray-200 p-6 shadow-sm"
-                style={{ 
-                  left: cardIndex === 0 ? '0%' : cardIndex === 1 ? '33.333%' : '66.666%',
-                  transform: cardIndex > 0 ? `translateX(${cardIndex * 1}rem)` : 'none'
-                }}
+                className={`bg-white rounded-lg border border-gray-200 p-6 shadow-sm ${
+                  product.isDragDrop ? 'bg-blue-600 text-white border-blue-600' : ''
+                }`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <h3 className={`text-lg font-semibold ${product.isDragDrop ? 'text-white' : 'text-gray-900'}`}>
+                    {product.name}
+                  </h3>
+                  <ChevronRight className={`w-4 h-4 ${product.isDragDrop ? 'text-white' : 'text-gray-400'}`} />
                 </div>
 
-                <div className="space-y-2 text-xs text-gray-600 mb-6">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Material:</span>
-                    <span className="text-right">{product.material}</span>
+                {product.isDragDrop ? (
+                  <div className="text-center py-8">
+                    <div className="text-2xl font-bold mb-2">{product.subtitle}</div>
+                    <div className="mb-8">
+                      {/* 3D Design Icon */}
+                      <div className="w-24 h-24 mx-auto mb-4 border-2 border-white rounded-lg flex items-center justify-center">
+                        <div className="w-16 h-16 border border-white rounded transform rotate-12"></div>
+                      </div>
+                    </div>
+                    <div className="text-sm opacity-75">
+                      <div className="mb-1">SUPPORTED FORMATS</div>
+                      <div className="font-mono">{product.supportedFormats}</div>
+                    </div>
                   </div>
-                  {product.loadCapacity && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Load Capacity:</span>
-                      <span className="text-right">{product.loadCapacity}</span>
+                ) : (
+                  <>
+                    <div className="space-y-2 text-xs text-gray-600 mb-6">
+                      <div className="flex justify-between">
+                        <span className="font-medium">Material:</span>
+                        <span className="text-right">{product.material}</span>
+                      </div>
+                      {product.loadCapacity && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Load Capacity:</span>
+                          <span className="text-right">{product.loadCapacity}</span>
+                        </div>
+                      )}
+                      {product.thread && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Thread:</span>
+                          <span className="text-right">{product.thread}</span>
+                        </div>
+                      )}
+                      {product.bearingType && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Bearing Type:</span>
+                          <span className="text-right">{product.bearingType}</span>
+                        </div>
+                      )}
+                      {product.holeDiameter && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Hole Diameter:</span>
+                          <span className="text-right">{product.holeDiameter}</span>
+                        </div>
+                      )}
+                      {product.vibrationDamping && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Vibration Damping:</span>
+                          <span className="text-right">{product.vibrationDamping}</span>
+                        </div>
+                      )}
+                      {product.mountingStyle && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Mounting Style:</span>
+                          <span className="text-right">{product.mountingStyle}</span>
+                        </div>
+                      )}
+                      {product.pinCount && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Pin Count:</span>
+                          <span className="text-right">{product.pinCount}</span>
+                        </div>
+                      )}
+                      {product.waterproofRating && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Waterproof Rating:</span>
+                          <span className="text-right">{product.waterproofRating}</span>
+                        </div>
+                      )}
+                      {product.locking && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Locking:</span>
+                          <span className="text-right">{product.locking}</span>
+                        </div>
+                      )}
+                      {product.fitType && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Fit Type:</span>
+                          <span className="text-right">{product.fitType}</span>
+                        </div>
+                      )}
+                      {product.waterResistance && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Water Resistance:</span>
+                          <span className="text-right">{product.waterResistance}</span>
+                        </div>
+                      )}
+                      {product.impactResistance && (
+                        <div className="flex justify-between">
+                          <span className="font-medium">Impact Resistance:</span>
+                          <span className="text-right">{product.impactResistance}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {product.thread && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Thread:</span>
-                      <span className="text-right">{product.thread}</span>
-                    </div>
-                  )}
-                  {product.bearingType && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Bearing Type:</span>
-                      <span className="text-right">{product.bearingType}</span>
-                    </div>
-                  )}
-                  {product.holeDiameter && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Hole Diameter:</span>
-                      <span className="text-right">{product.holeDiameter}</span>
-                    </div>
-                  )}
-                  {product.vibrationDamping && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Vibration Damping:</span>
-                      <span className="text-right">{product.vibrationDamping}</span>
-                    </div>
-                  )}
-                  {product.mountingStyle && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Mounting Style:</span>
-                      <span className="text-right">{product.mountingStyle}</span>
-                    </div>
-                  )}
-                  {product.pinCount && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Pin Count:</span>
-                      <span className="text-right">{product.pinCount}</span>
-                    </div>
-                  )}
-                  {product.waterproofRating && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Waterproof Rating:</span>
-                      <span className="text-right">{product.waterproofRating}</span>
-                    </div>
-                  )}
-                  {product.locking && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Locking:</span>
-                      <span className="text-right">{product.locking}</span>
-                    </div>
-                  )}
-                  {product.fitType && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Fit Type:</span>
-                      <span className="text-right">{product.fitType}</span>
-                    </div>
-                  )}
-                  {product.waterResistance && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Water Resistance:</span>
-                      <span className="text-right">{product.waterResistance}</span>
-                    </div>
-                  )}
-                  {product.impactResistance && (
-                    <div className="flex justify-between">
-                      <span className="font-medium">Impact Resistance:</span>
-                      <span className="text-right">{product.impactResistance}</span>
-                    </div>
-                  )}
-                </div>
 
-                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
-                  <img 
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                    <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+                      <img 
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </>
+                )}
               </motion.div>
             ))}
           </AnimatePresence>
