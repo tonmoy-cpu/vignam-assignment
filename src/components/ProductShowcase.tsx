@@ -13,7 +13,7 @@ export default function ProductShowcase() {
       loadCapacity: 'Up to 10,000 N',
       thread: 'M8 to M30',
       bearingType: 'Ball or Plain',
-      image: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
+      image: 'https://flutebearer.wordpress.com/wp-content/uploads/2020/02/figxx.jpg?w=628'
     },
     {
       name: 'Mounting Plate',
@@ -21,7 +21,7 @@ export default function ProductShowcase() {
       holeDiameter: '6 mm to 12 mm',
       vibrationDamping: 'Rubber Inserts',
       mountingStyle: 'Horizontal, Vertical',
-      image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
+      image: 'https://static.treatstock.com/static/files/4e/dc/418934_112_ac6099b85738a8ba69a7b8f6ee0b5e20_720x540.jpg?date=1540228634'
     },
     {
       name: 'Multi-Pin Enclosure',
@@ -29,7 +29,7 @@ export default function ProductShowcase() {
       pinCount: '2 to 50+ Pins',
       waterproofRating: 'IP65/IP67',
       locking: 'Screw or Clip',
-      image: 'https://images.pexels.com/photos/1108117/pexels-photo-1108117.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
+      image: 'https://fbi.cults3d.com/uploaders/28926434/illustration-file/36d9bcfb-8f0f-415c-b068-caddd6f88bc7/Screenshot-2023-07-31-001443.png'
     },
     {
       name: 'Protective Cap',
@@ -37,7 +37,7 @@ export default function ProductShowcase() {
       fitType: 'Snap-on, Threaded',
       waterResistance: 'IP54',
       impactResistance: '10 J',
-      image: 'https://images.pexels.com/photos/1108102/pexels-photo-1108102.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
+      image: 'https://fbi.cults3d.com/uploaders/16984740/illustration-file/8ff9ec1c-1be7-4e52-8b89-9601ef52e51d/d0064d7cd4e58864d2baa0d97c66e90d.png'
     }
   ];
 
@@ -214,46 +214,6 @@ export default function ProductShowcase() {
                 </div>
               </motion.div>
             ))}
-          </AnimatePresence>
-
-          {/* Drag & Drop Card - Shows as third card after first slide */}
-          <AnimatePresence>
-            {showDragDrop && (
-              <motion.div
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 100, opacity: 0 }}
-                transition={{ 
-                  duration: 0.8, 
-                  delay: 0.2,
-                  type: "spring",
-                  stiffness: 100
-                }}
-                className="absolute w-full md:w-[calc(33.333%-1rem)] bg-blue-600 rounded-lg p-8 text-center text-white"
-                style={{ 
-                  left: '66.666%',
-                  transform: 'translateX(2rem)'
-                }}
-              >
-                <h3 className="text-2xl font-bold mb-6">
-                  Drag & Drop
-                  <br />
-                  Your 3D Design
-                </h3>
-                
-                <div className="w-24 h-24 mx-auto mb-6 border-2 border-white/30 border-dashed rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <div className="text-xs opacity-75">Drop files here</div>
-                  </div>
-                </div>
-                
-                <p className="text-xs opacity-90 mb-2">SUPPORTED FORMATS</p>
-                <p className="font-mono text-sm">IGES / STL / FBX / DXF / STEP</p>
-              </motion.div>
-            )}
           </AnimatePresence>
         </div>
       </div>

@@ -86,8 +86,8 @@ export default function Hero() {
           </h1>
           
           {/* 3D Cube Model */}
-          <div className="flex justify-center my-12">
-            <div className="w-48 h-48 relative">
+          <div className="flex justify-center my-30">
+            <div className="w-70 h-70 relative">
               <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
                 <Suspense fallback={null}>
                   <Environment files="/forest.exr" />
@@ -130,9 +130,9 @@ export default function Hero() {
           </p>
           
           <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
+            whileHover={{ scale: 0.71 }}
+            whileTap={{ scale: 0.68 }}
+            className="bg-blue-600 text-white px-8 py-1 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -140,6 +140,9 @@ export default function Hero() {
             <span>UPLOAD YOUR DESIGN</span>
           </motion.button>
         </motion.div>
+        <br />
+        <br />
+        <br />
 
         {/* Bottom Stats */}
         <div className="absolute bottom-8 left-6 text-xs text-gray-500">
@@ -155,19 +158,19 @@ export default function Hero() {
 
       {/* 3D Scene - Positioned around text */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+        <Canvas camera={{ position: [0, 1, 8], fov: 50 }}>
           <Suspense fallback={null}>
             <Environment files="/forest.exr" />
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.3} />
             <directionalLight position={[10, 10, 5]} intensity={1} />
             
             {/* Positioned CNC Parts around the text */}
-            <CNCPart position={[-6, 3, -2]} rotation={[0.2, 0, 0.1]} scale={0.4} />
+            <CNCPart position={[-6, 3, -2]} rotation={[0.2, 0, 0.1]} scale={0.5} />
             <CNCPart position={[-4, -3, 1]} rotation={[0.1, 0.3, 0]} scale={0.5} />
-            <CNCPart position={[5, 2, -1]} rotation={[0, 0.5, 0.2]} scale={0.4} />
-            <CNCPart position={[6, -2, 0]} rotation={[0.3, 0, 0]} scale={0.3} />
-            <CNCPart position={[1, 4, -3]} rotation={[0, 0.8, 0.1]} scale={0.3} />
-            <CNCPart position={[-1, -4, -2]} rotation={[0.4, 0.2, 0]} scale={0.4} />
+            <CNCPart position={[5, 2, -1]} rotation={[0, 0.5, 0.2]} scale={0.6} />
+            <CNCPart position={[6, -2, 0]} rotation={[0.3, 0, 0]} scale={0.5} />
+            <CNCPart position={[1, 4, -3]} rotation={[0, 0.8, 0.1]} scale={0.6} />
+            <CNCPart position={[-1, -4, -2]} rotation={[0.4, 0.2, 0]} scale={0.6} />
             
             <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.2} />
           </Suspense>
