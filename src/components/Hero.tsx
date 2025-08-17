@@ -1,8 +1,8 @@
-import React, { Suspense, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Float, Environment } from '@react-three/drei'
-import { motion } from 'framer-motion'
-import * as THREE from 'three'
+import React, { Suspense, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Environment, Float } from '@react-three/drei';
+import { motion } from 'framer-motion';
+import * as THREE from 'three';
 
 function CNCPart({ position, rotation, scale = 1 }: { position: [number, number, number], rotation: [number, number, number], scale?: number }) {
   const meshRef = useRef<THREE.Mesh>(null)
@@ -25,7 +25,29 @@ function CNCPart({ position, rotation, scale = 1 }: { position: [number, number,
         </mesh>
       </mesh>
     </Float>
-  )
+  );
+}
+
+function MotorModel() {
+  try {
+    const { scene } = useGLTF('/landing_page_motor.glb');
+    const meshRef = useRef<THREE.Group>(null);
+    
+    useFrame(() => {
+      if (meshRef.current) {
+        meshRef.current.rotation.y += 0.005;
+      }
+    });
+
+    return <primitive ref={meshRef} object={scene} scale={1.5} position={[0, 0, 0]} />;
+  } catch (error) {
+    return (
+      <mesh>
+        <boxGeometry args={[1.5, 0.8, 1.5]} />
+        <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} />
+      </mesh>
+    );
+  }
 }
 
 export default function Hero() {
@@ -58,9 +80,10 @@ export default function Hero() {
             <br />
             Tomorrow
           </h1>
-
-          <div className="flex justify-center my-1">
-            <div className="w-64 h-64 relative">
+          
+          {/* 3D Cube Model */}
+          <div className="flex justify-center my-30">
+            <div className="w-70 h-70 relative">
               <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
                 <Suspense fallback={null}>
                   <Environment files="/forest.exr" />
@@ -95,11 +118,11 @@ export default function Hero() {
             <br />
             parts delivered fast, no stress
           </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
+          
+          <motion.button 
+            whileHover={{ scale: 0.71 }}
+            whileTap={{ scale: 0.68 }}
+            className="bg-blue-600 text-white px-8 py-1 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -111,7 +134,7 @@ export default function Hero() {
             <span>UPLOAD YOUR DESIGN</span>
           </motion.button>
         </motion.div>
-
+        <br />
         <br />
         <br />
 

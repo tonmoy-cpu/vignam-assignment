@@ -10,27 +10,32 @@ export default function AboutSection() {
     {
       number: '01',
       name: 'Custom Brackets',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Hilti_Schienen_Eckverbinder_90%C2%B0.jpg',
+      image:
+        'https://upload.wikimedia.org/wikipedia/commons/a/a2/Hilti_Schienen_Eckverbinder_90%C2%B0.jpg',
     },
     {
       number: '02',
       name: 'Steel Adapters',
-      image: 'https://5.imimg.com/data5/SELLER/Default/2023/1/UI/BE/IH/39196238/stainless-steel-hex-adapter.png',
+      image:
+        'https://5.imimg.com/data5/SELLER/Default/2023/1/UI/BE/IH/39196238/stainless-steel-hex-adapter.png',
     },
     {
       number: '03',
       name: 'Motor Mounts',
-      image: 'https://i.ytimg.com/vi/lxK-d9Dx86I/maxresdefault.jpg',
+      image:
+        'https://i.ytimg.com/vi/lxK-d9Dx86I/maxresdefault.jpg',
     },
     {
       number: '04',
       name: 'Enclosures',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Lubbermanswijk_outdoor_electrical_enclosure%2C_Oude_Pekela_%282020%29_05.jpg',
+      image:
+        'https://upload.wikimedia.org/wikipedia/commons/0/00/Lubbermanswijk_outdoor_electrical_enclosure%2C_Oude_Pekela_%282020%29_05.jpg',
     },
   ];
 
   return (
     <section id="about" className="py-20 bg-white relative">
+      {/* Grid Background */}
       <div className="absolute inset-0 opacity-30">
         <div
           className="absolute inset-0"
@@ -104,23 +109,29 @@ export default function AboutSection() {
                     {service.name}
                   </span>
                   <div className="flex-1 border-b border-gray-200"></div>
+                  <span className="text-2xl">{service.icon}</span>
                 </motion.div>
               ))}
             </div>
 
+            {/* Preview image (kept responsive and 16:9) */}
             <motion.div
-              className="w-full md:w-[600px] aspect-video bg-gray-100 rounded-lg overflow-hidden"
+              className="w-full md:w-[560px] aspect-video bg-gray-100 rounded-lg overflow-hidden"
               key={currentImage}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <img
-                src={services[currentImage].image}
-                alt={services[currentImage].name}
-                className="w-full h-full object-cover"
-                loading="eager"
-              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center space-x-8">
+                  {/* 3D Part Models */}
+                  <div className="w-16 h-16 bg-yellow-400 rounded transform rotate-12"></div>
+                  <div className="w-12 h-16 bg-blue-800 rounded-lg"></div>
+                  <div className="w-14 h-14 bg-yellow-500 rounded-full"></div>
+                  <div className="w-16 h-12 bg-yellow-600 rounded transform -rotate-12"></div>
+                  <div className="w-12 h-12 bg-gray-600 rounded-full"></div>
+                </div>
+              </div>
             </motion.div>
           </div>
 
