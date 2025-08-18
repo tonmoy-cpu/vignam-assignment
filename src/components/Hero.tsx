@@ -4,29 +4,6 @@ import { OrbitControls, Float, Environment, useGLTF, useAnimations } from '@reac
 import { motion } from 'framer-motion'
 import * as THREE from 'three'
 
-function MotorModel() {
-  const group = useRef()
-  const { scene, animations } = useGLTF('/landing_page_motor.glb')
-  const { actions } = useAnimations(animations, group)
-
-  React.useEffect(() => {
-    if (actions) {
-      Object.values(actions).forEach((action) => {
-        if (action) {
-          action.setLoop(THREE.LoopRepeat, Infinity)
-          action.play()
-        }
-      })
-    }
-  }, [actions])
-
-  return (
-    <group ref={group} scale={[2.5, 2.5, 2.5]} position={[0, -0.5, 0]}>
-      <primitive object={scene} />
-    </group>
-  )
-}
-
 function CNCPart({
   position,
   rotation,
@@ -104,7 +81,34 @@ export default function Hero() {
           Tomorrow
         </motion.h1>
 
-        <p className="text-base md:text-lg text-gray-600 mb-2 max-w-xl">
+        <div className="w-48 h-48 md:w-64 md:h-64 mb-8">
+          <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+            <Suspense fallback={null}>
+              <Environment files="/forest.exr" />
+              <ambientLight intensity={0.6} />
+              <directionalLight position={[10, 10, 5]} intensity={1} />
+
+              <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+                <mesh>
+                  <boxGeometry args={[1.5, 1.5, 1.5]} />
+                  <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} envMapIntensity={1} />
+                  <mesh position={[0, 0.6, 0]} scale={[1.3, 0.1, 1.1]}>
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                  </mesh>
+                  <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
+                  </mesh>
+                </mesh>
+              </Float>
+
+              <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+            </Suspense>
+          </Canvas>
+        </div>
+
+        <p className="text-base md:text-lg text-gray-600 mb-8 max-w-xl">
           Upload your CAD file, and we'll take care of machining, finishing, and shipping—accurate parts delivered fast, no stress.
         </p>
 
