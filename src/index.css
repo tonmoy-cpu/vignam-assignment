@@ -132,6 +132,12 @@ img {
   will-change: opacity;
 }
 
+/* Responsive */
+@media (max-width: 640px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+}
+
 /* Canvas */
 .canvas-container {
   position: absolute;
@@ -146,5 +152,6 @@ img {
   pointer-events: auto;
 }
 .hero-title {
+  margin-bottom: 370px;
   text-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px, rgba(0, 0, 0, 0.06) 0px 1px 2px;
 }
