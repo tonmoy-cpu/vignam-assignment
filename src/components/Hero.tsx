@@ -10,27 +10,19 @@ function MotorModel() {
   const { actions } = useAnimations(animations, group)
 
   React.useEffect(() => {
-    // Play all animations if they exist
+    // Play all animations in loop
     if (actions) {
       Object.values(actions).forEach((action) => {
         if (action) {
+          action.setLoop(THREE.LoopRepeat, Infinity)
           action.play()
         }
       })
     }
   }, [actions])
 
-  useFrame((state) => {
-    if (group.current) {
-      // Gentle floating animation
-      group.current.position.y += Math.sin(state.clock.elapsedTime * 0.5) * 0.02
-      // Slow rotation
-      group.current.rotation.y += 0.005
-    }
-  })
-
   return (
-    <group ref={group} scale={[2, 2, 2]} position={[0, 0, 0]}>
+    <group ref={group} scale={[1.5, 1.5, 1.5]} position={[0, 0, 0]}>
       <primitive object={scene} />
     </group>
   )
@@ -102,13 +94,19 @@ export default function Hero() {
           <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
             <Suspense fallback={null}>
               <Environment files="/forest.exr" />
-              <ambientLight intensity={0.6} />
-              <directionalLight position={[10, 10, 5]} intensity={1} />
-              <pointLight position={[-10, -10, -5]} intensity={0.5} />
+              <ambientLight intensity={0.4} />
+              <directionalLight position={[10, 10, 5]} intensity={0.8} />
+              <pointLight position={[-10, -10, -5]} intensity={0.3} />
 
               <MotorModel />
 
-              <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+              <OrbitControls 
+                enableZoom={false} 
+                enablePan={false} 
+                autoRotate={false}
+                maxPolarAngle={Math.PI / 1.5}
+                minPolarAngle={Math.PI / 3}
+              />
             </Suspense>
           </Canvas>
         </div>
