@@ -1,8 +1,40 @@
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Float, Environment } from '@react-three/drei'
+import { OrbitControls, Float, Environment, useGLTF, useAnimations } from '@react-three/drei'
 import { motion } from 'framer-motion'
 import * as THREE from 'three'
+
+function MotorModel() {
+  const group = useRef()
+  const { scene, animations } = useGLTF('/landing_page_motor.glb')
+  const { actions } = useAnimations(animations, group)
+
+  React.useEffect(() => {
+    // Play all animations if they exist
+    if (actions) {
+      Object.values(actions).forEach((action) => {
+        if (action) {
+          action.play()
+        }
+      })
+    }
+  }, [actions])
+
+  useFrame((state) => {
+    if (group.current) {
+      // Gentle floating animation
+      group.current.position.y += Math.sin(state.clock.elapsedTime * 0.5) * 0.02
+      // Slow rotation
+      group.current.rotation.y += 0.005
+    }
+  })
+
+  return (
+    <group ref={group} scale={[2, 2, 2]} position={[0, 0, 0]}>
+      <primitive object={scene} />
+    </group>
+  )
+}
 
 function CNCPart({
   position,
@@ -72,21 +104,9 @@ export default function Hero() {
               <Environment files="/forest.exr" />
               <ambientLight intensity={0.6} />
               <directionalLight position={[10, 10, 5]} intensity={1} />
+              <pointLight position={[-10, -10, -5]} intensity={0.5} />
 
-              <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-                <mesh>
-                  <boxGeometry args={[1.5, 1.5, 1.5]} />
-                  <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} envMapIntensity={1} />
-                  <mesh position={[0, 0.6, 0]} scale={[1.3, 0.1, 1.1]}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                  </mesh>
-                  <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                  </mesh>
-                </mesh>
-              </Float>
+              <MotorModel />
 
               <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
             </Suspense>
