@@ -1,8 +1,31 @@
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Float, Environment } from '@react-three/drei'
+import { OrbitControls, Float, Environment, useGLTF, useAnimations } from '@react-three/drei'
 import { motion } from 'framer-motion'
 import * as THREE from 'three'
+
+function MotorModel() {
+  const group = useRef()
+  const { scene, animations } = useGLTF('/landing_page_motor.glb')
+  const { actions } = useAnimations(animations, group)
+
+  React.useEffect(() => {
+    if (actions) {
+      Object.values(actions).forEach((action) => {
+        if (action) {
+          action.setLoop(THREE.LoopRepeat, Infinity)
+          action.play()
+        }
+      })
+    }
+  }, [actions])
+
+  return (
+    <group ref={group} scale={[2.5, 2.5, 2.5]} position={[0, -0.5, 0]}>
+      <primitive object={scene} />
+    </group>
+  )
+}
 
 function CNCPart({
   position,
@@ -52,12 +75,27 @@ export default function Hero() {
         />
       </div>
 
+      {/* === Motor Model in Background === */}
+      <div className="absolute inset-0 z-0">
+        <Canvas camera={{ position: [0, 0, 8], fov: 110 }}>
+          <Suspense fallback={null}>
+            <Environment files="/forest.exr" />
+            <ambientLight intensity={0.7} />
+            <directionalLight position={[10, 10, 5]} intensity={0.8} />
+            <pointLight position={[-10, -10, -5]} intensity={0.3} />
+            <MotorModel />
+            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {/* === Foreground Text === */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full max-w-5xl mx-auto pt-24">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-5xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight"
+          className="text-3xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight hero-title"
         >
           Precision <span className="text-gray-400 italic">CNC</span> Parts
           <br />
@@ -66,34 +104,7 @@ export default function Hero() {
           Tomorrow
         </motion.h1>
 
-        <div className="w-48 h-48 md:w-64 md:h-64 mb-8">
-          <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-            <Suspense fallback={null}>
-              <Environment files="/forest.exr" />
-              <ambientLight intensity={0.6} />
-              <directionalLight position={[10, 10, 5]} intensity={1} />
-
-              <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-                <mesh>
-                  <boxGeometry args={[1.5, 1.5, 1.5]} />
-                  <meshStandardMaterial color="#8B9DC3" metalness={0.9} roughness={0.1} envMapIntensity={1} />
-                  <mesh position={[0, 0.6, 0]} scale={[1.3, 0.1, 1.1]}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                  </mesh>
-                  <mesh position={[0, -0.6, 0]} scale={[1.1, 0.1, 1.1]}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color="#4F46E5" metalness={0.8} roughness={0.2} />
-                  </mesh>
-                </mesh>
-              </Float>
-
-              <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
-            </Suspense>
-          </Canvas>
-        </div>
-
-        <p className="text-base md:text-lg text-gray-600 mb-8 max-w-xl">
+        <p className="text-base md:text-lg text-gray-600 mb-2 max-w-xl">
           Upload your CAD file, and we'll take care of machining, finishing, and shipping—accurate parts delivered fast, no stress.
         </p>
 
@@ -112,28 +123,7 @@ export default function Hero() {
           <span>UPLOAD YOUR DESIGN</span>
         </motion.button>
       </div>
-
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <Canvas camera={{ position: [0, 1, 8], fov: 50 }}>
-          <Suspense fallback={null}>
-            <Environment files="/forest.exr" />
-            <ambientLight intensity={0.3} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-
-            <CNCPart position={[-6, 3, -2]} rotation={[0.2, 0, 0.1]} scale={0.5} />
-            <CNCPart position={[-4, -3, 1]} rotation={[0.1, 0.3, 0]} scale={0.5} />
-            <CNCPart position={[5, 2, -1]} rotation={[0, 0.5, 0.2]} scale={0.6} />
-            <CNCPart position={[6, -2, 0]} rotation={[0.3, 0, 0]} scale={0.5} />
-            <CNCPart position={[1, 4, -3]} rotation={[0, 0.8, 0.1]} scale={0.6} />
-            <CNCPart position={[-1, -4, -2]} rotation={[0.4, 0.2, 0]} scale={0.6} />
-
-            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.2} />
-          </Suspense>
-        </Canvas>
-      </div>
       <br />
-      <br />
-
       <div className="absolute bottom-6 left-6 text-xs md:text-sm text-gray-500 text-left">
         <div>12+ YEARS OF DELIVERING</div>
         <div>PERFECT DETAILS</div>
